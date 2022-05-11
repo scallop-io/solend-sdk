@@ -36,6 +36,7 @@ import {
 import { U64_MAX, WAD, getProgramId } from "./constants";
 import { parseReserve } from "../state/reserve";
 import { ReserveConfigType, MarketConfigType, ConfigType } from "./shared";
+import { extendConfig } from "../utils/config";
 
 export const POSITION_LIMIT = 6;
 
@@ -156,11 +157,12 @@ export class SolendAction {
     lendingMarketAddress?: PublicKey,
     hostAta?: PublicKey
   ) {
-    const solendInfo = (await (
+    let solendInfo = (await (
       await axios.get(
         `${API_ENDPOINT}/v1/markets/configs?scope=all&deployment=${environment}`
       )
     ).data) as ConfigType;
+    solendInfo = extendConfig(solendInfo, environment);
 
     let lendingMarket: MarketConfigType | undefined;
     if (lendingMarketAddress) {

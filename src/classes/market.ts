@@ -2,6 +2,7 @@ import { Connection, PublicKey } from "@solana/web3.js";
 import { SolendObligation } from "./obligation";
 import { SolendReserve } from "./reserve";
 import { parseObligation } from "../state/obligation";
+import { extendConfig } from "../utils/config";
 import axios from "axios";
 import { getProgramId } from "./constants";
 import {
@@ -43,11 +44,12 @@ export class SolendMarket {
     environment: "production" | "devnet" | "beta" = "production",
     marketAddress?: string
   ) {
-    const config = (await (
+    let config = (await (
       await axios.get(
         `${API_ENDPOINT}/v1/markets/configs?scope=all&deployment=${environment}`
       )
     ).data) as Config;
+    config = extendConfig(config, environment);
 
     let marketConfig;
     if (marketAddress) {
